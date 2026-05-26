@@ -2,17 +2,26 @@
 DocMind — AI Document Q&A SaaS
 FastAPI application entrypoint.
 """
+import sys
+from pathlib import Path
+
+# Ensure the backend directory is on the Python path so that
+# 'from services.query import ...' works regardless of where
+# uvicorn is launched from.
+sys.path.insert(0, str(Path(__file__).parent))
+
 import logging
 from contextlib import asynccontextmanager
- 
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
- 
+
 from core.config import get_settings
 from core.database import init_db
 from models.schemas import HealthResponse
-from routers import ingest, query
- 
+from models import workspace_models as _workspace_models  # noqa: F401 — ensures tables are created
+from routers import ingest, query, workspace
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
@@ -23,14 +32,20 @@ settings = get_settings()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Application lifespan manager."""
-    # Startup
-    logger.info("Initializing database...")
+    """Runs on startup and shutdown."""
+    logger.info(f"Starting {settings.app_name} [{settings.app_env}]")
+
+    # Create DB tables
     await init_db()
-    logger.info("Database initialized successfully")
+    logger.info("Database ready")
+
+    # Pre-load the embedding model so the first upload isn't slow
+    from services.vector_store import get_embedding_model
+    get_embedding_model()
+
     yield
-    # Shutdown
-    logger.info("Shutting down...")
+
+    logger.info("Shutting down")
 
 
 app = FastAPI(
@@ -52,6 +67,8 @@ app.add_middleware(
 # ── Routers ───────────────────────────────────────────────────────────────────
 app.include_router(ingest.router)
 app.include_router(query.router)
+app.include_router(workspace.router)
+
 
 # ── Health check ──────────────────────────────────────────────────────────────
 @app.get("/health", response_model=HealthResponse)
@@ -62,3 +79,12 @@ async def health():
         embedding_model=settings.embedding_model,
         llm_model=settings.llm_model,
     )
+
+
+@app.get("/")
+async def root():
+    return {
+        "name": settings.app_name,
+        "docs": "/docs",
+        "health": "/health",
+    }
