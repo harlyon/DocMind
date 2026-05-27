@@ -11,6 +11,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 import logging
+import shutil
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -79,6 +80,7 @@ async def health():
         version="0.1.0",
         embedding_model=settings.embedding_model,
         llm_model=settings.llm_model,
+        ocr_available=shutil.which("tesseract") is not None,
     )
 
 

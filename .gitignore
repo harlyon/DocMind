@@ -56,16 +56,12 @@ coverage.xml
 .DS_Store
 Thumbs.db
 
-# ── Docker ────────────────────────────────────────────────────────────────────
-.dockerignore
-
 # ── Jupyter (if you add notebooks later) ─────────────────────────────────────
 .ipynb_checkpoints/
 *.ipynb
 
 # ── ML model cache ────────────────────────────────────────────────────────────
 # HuggingFace and sentence-transformers cache downloaded model weights here
-~/.cache/huggingface/
 .cache/
 models/
 
