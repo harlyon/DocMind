@@ -1,21 +1,21 @@
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 WORKDIR /app
 
-# System deps for building Python packages
-RUN apt-get update && apt-get install -y \
+# Install system dependencies required for heavy Python packages (C-extensions)
+RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
+    python3-dev \
+    tesseract-ocr \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
 
-# Use --only-binary=:all: to avoid source compilation issues
-RUN pip install --no-cache-dir --only-binary=:all: -r requirements.txt \
-    || pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Create data directories
 RUN mkdir -p data/uploads data/chroma
 
 EXPOSE 8000

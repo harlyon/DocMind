@@ -11,6 +11,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 import logging
+import shutil
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -20,7 +21,7 @@ from core.config import get_settings
 from core.database import init_db
 from models.schemas import HealthResponse
 from models import workspace_models as _workspace_models  # noqa: F401 — ensures tables are created
-from routers import ingest, query, workspace
+from routers import ingest, query, workspace, analysis
 
 logging.basicConfig(
     level=logging.INFO,
@@ -68,6 +69,7 @@ app.add_middleware(
 app.include_router(ingest.router)
 app.include_router(query.router)
 app.include_router(workspace.router)
+app.include_router(analysis.router)
 
 
 # ── Health check ──────────────────────────────────────────────────────────────
@@ -78,6 +80,7 @@ async def health():
         version="0.1.0",
         embedding_model=settings.embedding_model,
         llm_model=settings.llm_model,
+        ocr_available=shutil.which("tesseract") is not None,
     )
 
 

@@ -1,0 +1,74 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+wheels/
+
+# ── Virtual environments ──────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+.env.local
+.env.production
+
+
+.env
+
+# ── Data directories — uploads and vector store ───────────────────────────────
+data/uploads/
+data/chroma/
+data/*.db
+data/
+
+# ── FastAPI / uvicorn ─────────────────────────────────────────────────────────
+*.log
+
+# ── Testing ───────────────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+nosetests.xml
+coverage.xml
+*.cover
+
+# ── IDEs ─────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Jupyter (if you add notebooks later) ─────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
+
+# ── ML model cache ────────────────────────────────────────────────────────────
+# HuggingFace and sentence-transformers cache downloaded model weights here
+.cache/
+models/
+
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini

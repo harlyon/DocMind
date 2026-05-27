@@ -7,6 +7,10 @@ pydantic-settings==2.3.0
 # PDF parsing
 PyMuPDF==1.27.2
 
+# OCR — fallback for scanned/image-based PDFs
+pytesseract==0.3.13
+Pillow==10.3.0
+
 # Embeddings + LangChain RAG
 langchain==0.2.5
 langchain-community==0.2.5
@@ -23,6 +27,7 @@ google-genai>=1.0.0
 sqlalchemy==2.0.30
 asyncpg==0.29.0
 aiosqlite==0.20.0
+greenlet
 
 # Utilities
 python-jose[cryptography]==3.3.0
