@@ -20,7 +20,7 @@ from core.config import get_settings
 from core.database import init_db
 from models.schemas import HealthResponse
 from models import workspace_models as _workspace_models  # noqa: F401 — ensures tables are created
-from routers import ingest, query, workspace
+from routers import ingest, query, workspace, analysis
 
 logging.basicConfig(
     level=logging.INFO,
@@ -68,6 +68,7 @@ app.add_middleware(
 app.include_router(ingest.router)
 app.include_router(query.router)
 app.include_router(workspace.router)
+app.include_router(analysis.router)
 
 
 # ── Health check ──────────────────────────────────────────────────────────────
