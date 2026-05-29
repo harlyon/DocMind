@@ -1,0 +1,17 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: docmind-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      # Persists your uploaded PDFs and Chroma vector store databases locally
+      - ./data:/app/data
+    environment:
+      # Optional: Override values specifically for Docker if needed
+      - HOST=0.0.0.0

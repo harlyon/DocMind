@@ -1,0 +1,24 @@
+# Local virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Version control
+.git/
+.gitignore
+
+# Local persistent application data (so you don't overwrite production data)
+data/
+*.db
+*.sqlite3
+
+# Development configurations and secrets
+.env
+.vscode/
+.idea/
+
+# System leftovers
+.DS_Store
+__pycache__/
+*.pyc
