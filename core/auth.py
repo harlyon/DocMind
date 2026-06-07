@@ -7,8 +7,8 @@ How it works:
   3. Decode and verify the JWT — checks signature, expiry, and issuer
   4. Return the user_id (Clerk's `sub` claim) for use in route handlers
 
-The JWKS endpoint is called once and cached — not on every request.
-Clerk rotates keys infrequently so a 1-hour cache is safe.
+The JWKS endpoint is fetched asynchronously and cached for 1 hour.
+Clerk rotates keys infrequently so this is safe.
 
 Environment variables required:
   CLERK_JWKS_URL  — e.g. https://clerk.your-app.clerk.accounts.dev/.well-known/jwks.json
@@ -20,7 +20,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import logging
 import time
-from functools import lru_cache
 
 import httpx
 from fastapi import Depends, HTTPException, status
@@ -41,8 +40,11 @@ _jwks_fetched_at: float = 0
 _JWKS_CACHE_TTL = 3600  # 1 hour
 
 
-def _get_jwks() -> dict:
-    """Fetch Clerk's public keys, with 1-hour in-memory cache."""
+async def _get_jwks() -> dict:
+    """
+    Fetch Clerk's public keys asynchronously, with 1-hour in-memory cache.
+    Uses httpx.AsyncClient so the event loop is never blocked.
+    """
     global _jwks_cache, _jwks_fetched_at
 
     now = time.time()
@@ -56,12 +58,13 @@ def _get_jwks() -> dict:
         )
 
     try:
-        response = httpx.get(settings.clerk_jwks_url, timeout=10)
-        response.raise_for_status()
-        _jwks_cache = response.json()
-        _jwks_fetched_at = now
-        logger.info("Fetched Clerk JWKS")
-        return _jwks_cache
+        async with httpx.AsyncClient() as client:
+            response = await client.get(settings.clerk_jwks_url, timeout=10)
+            response.raise_for_status()
+            _jwks_cache = response.json()
+            _jwks_fetched_at = now
+            logger.info("Fetched Clerk JWKS")
+            return _jwks_cache
     except Exception as exc:
         logger.error(f"Failed to fetch Clerk JWKS: {exc}")
         raise HTTPException(
@@ -70,7 +73,7 @@ def _get_jwks() -> dict:
         )
 
 
-def get_current_user(
+async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
 ) -> str:
     """
@@ -86,7 +89,7 @@ def get_current_user(
     token = credentials.credentials
 
     try:
-        jwks = _get_jwks()
+        jwks = await _get_jwks()
 
         # Decode header to find the key ID (kid)
         unverified_header = jwt.get_unverified_header(token)

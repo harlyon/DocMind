@@ -1,7 +1,45 @@
+# fastapi==0.111.0
+# uvicorn[standard]==0.30.1
+# python-multipart==0.0.9
+# pydantic>=2.7.1
+# pydantic-settings==2.3.0
+
+# # PDF parsing
+# PyMuPDF==1.27.2
+
+# # OCR — fallback for scanned/image-based PDFs
+# pytesseract==0.3.13
+# Pillow>=10.3.0
+
+# # Embeddings + LangChain RAG
+# langchain==0.2.5
+# langchain-community==0.2.5
+# langchain-huggingface==0.0.3
+# sentence-transformers==3.0.1
+
+# # Vector store
+# chromadb==0.5.3
+
+# # LLM inference — Google Gemini
+# google-genai>=1.0.0
+
+# # Database
+# sqlalchemy>=2.0.36
+# asyncpg>=0.29.0
+# aiosqlite==0.20.0
+# greenlet
+
+# # Utilities
+# python-jose[cryptography]==3.3.0
+# passlib[bcrypt]==1.7.4
+# python-dotenv==1.0.1
+# httpx==0.27.0
+
+
 fastapi==0.111.0
 uvicorn[standard]==0.30.1
 python-multipart==0.0.9
-pydantic>=2.7.1
+pydantic==2.7.1
 pydantic-settings==2.3.0
 
 # PDF parsing
@@ -9,7 +47,7 @@ PyMuPDF==1.27.2
 
 # OCR — fallback for scanned/image-based PDFs
 pytesseract==0.3.13
-Pillow>=10.3.0
+Pillow==10.3.0
 
 # Embeddings + LangChain RAG
 langchain==0.2.5
@@ -24,13 +62,10 @@ chromadb==0.5.3
 google-genai>=1.0.0
 
 # Database
-sqlalchemy>=2.0.36
-asyncpg>=0.29.0
+sqlalchemy==2.0.30
+asyncpg==0.29.0
 aiosqlite==0.20.0
-greenlet
 
-# Utilities
+# Auth — JWT verification
 python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
-python-dotenv==1.0.1
 httpx==0.27.0
