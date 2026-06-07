@@ -1,7 +1,7 @@
 fastapi==0.111.0
 uvicorn[standard]==0.30.1
 python-multipart==0.0.9
-pydantic==2.7.1
+pydantic>=2.7.1
 pydantic-settings==2.3.0
 
 # PDF parsing
@@ -9,7 +9,7 @@ PyMuPDF==1.27.2
 
 # OCR — fallback for scanned/image-based PDFs
 pytesseract==0.3.13
-Pillow==10.3.0
+Pillow>=10.3.0
 
 # Embeddings + LangChain RAG
 langchain==0.2.5
@@ -24,8 +24,8 @@ chromadb==0.5.3
 google-genai>=1.0.0
 
 # Database
-sqlalchemy==2.0.30
-asyncpg==0.29.0
+sqlalchemy>=2.0.36
+asyncpg>=0.29.0
 aiosqlite==0.20.0
 greenlet
 

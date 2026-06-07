@@ -1,3 +1,5 @@
+# 
+
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -6,6 +8,7 @@ import json
 import logging
 import uuid
 
+from core.auth import get_current_user
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import StreamingResponse
 from sqlalchemy import select
@@ -50,7 +53,7 @@ async def _get_workspace_or_404(
 async def create_workspace(
     body: WorkspaceCreate,
     db: AsyncSession = Depends(get_db),
-    user_id: str = "dev-user",
+    user_id: str = Depends(get_current_user),
 ):
     """Create a new workspace."""
     ws = Workspace(
@@ -78,7 +81,7 @@ async def create_workspace(
 @router.get("", response_model=list[WorkspaceResponse])
 async def list_workspaces(
     db: AsyncSession = Depends(get_db),
-    user_id: str = "dev-user",
+    user_id: str = Depends(get_current_user),
 ):
     """List all workspaces for the current user."""
     result = await db.execute(

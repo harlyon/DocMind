@@ -25,6 +25,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import logging
 
+from core.auth import get_current_user
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -51,6 +52,7 @@ router = APIRouter(prefix="/api/analysis", tags=["analysis"])
 async def find_contradictions(
     request: ContradictionRequest,
     db: AsyncSession = Depends(get_db),
+    user_id: str = Depends(get_current_user),
 ):
     """
     Detect contradictions across all documents in a workspace.
@@ -74,6 +76,8 @@ async def find_contradictions(
     ws = await db.get(Workspace, request.workspace_id)
     if not ws:
         raise HTTPException(status_code=404, detail="Workspace not found")
+    if ws.user_id != user_id:
+        raise HTTPException(status_code=403, detail="Access denied")
 
     # ── Load ready documents ──────────────────────────────────────────────────
     result = await db.execute(
@@ -142,6 +146,7 @@ async def find_contradictions(
 async def run_due_diligence(
     request: ChecklistRequest,
     db: AsyncSession = Depends(get_db),
+    user_id: str = Depends(get_current_user),
 ):
     """
     Run a due diligence checklist against a document.
@@ -169,6 +174,8 @@ async def run_due_diligence(
     doc = await db.get(Document, request.document_id)
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
+    if doc.user_id != user_id:
+        raise HTTPException(status_code=403, detail="Access denied")
     if doc.status != "ready":
         raise HTTPException(
             status_code=400,
