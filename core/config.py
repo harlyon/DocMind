@@ -15,12 +15,13 @@ class Settings(BaseSettings):
     secret_key: str = "change-me-in-production"
 
     # Google Gemini
-    # Get a free key at https://aistudio.google.com/app/apikey
     google_api_key: str = ""
     llm_model: str = "gemini-2.5-flash"
-
-    # Embedding model — still local via sentence-transformers (free, no API key needed)
     embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
+
+    # Clerk Auth
+    # Get from: Clerk dashboard → API Keys → Advanced → JWKS endpoint
+    clerk_jwks_url: str = ""
 
     # ChromaDB
     chroma_persist_dir: str = "./data/chroma"

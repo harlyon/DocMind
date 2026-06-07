@@ -24,6 +24,7 @@ import os
 import uuid
 from pathlib import Path
 
+from core.auth import get_current_user
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, UploadFile, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -53,7 +54,7 @@ async def upload_document(
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     # TODO Day 3: replace hardcoded user_id with Clerk JWT
-    user_id: str = "dev-user",
+    user_id: str = Depends(get_current_user),
 ):
     """Upload a document and start the ingestion pipeline."""
 
@@ -126,7 +127,7 @@ async def get_ingestion_status(
 @router.get("/documents", response_model=DocumentListResponse)
 async def list_documents(
     db: AsyncSession = Depends(get_db),
-    user_id: str = "dev-user",
+    user_id: str = Depends(get_current_user),
 ):
     """List all documents for a user."""
     result = await db.execute(

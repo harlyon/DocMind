@@ -1,13 +1,3 @@
-# from fastapi import APIRouter
-
-# router = APIRouter(prefix="/query", tags=["query"])
-
-
-# @router.post("/")
-# async def query_documents():
-#     """Query ingested documents."""
-#     return {"message": "Query endpoint"}
-
 """
 Query router — RAG question answering with Gemini 2.5 Flash streaming.
 
@@ -37,6 +27,7 @@ import json
 import logging
 import uuid
 
+from core.auth import get_current_user
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy import select
@@ -66,7 +57,7 @@ async def ask_question(
     request: QueryRequest,
     db: AsyncSession = Depends(get_db),
     # TODO Day 3: replace with Clerk JWT user_id
-    user_id: str = "dev-user",
+    user_id: str = Depends(get_current_user),
 ):
     """
     Ask a question about a document. Returns an SSE stream.
@@ -199,7 +190,7 @@ async def ask_question(
 async def list_sessions(
     document_id: str,
     db: AsyncSession = Depends(get_db),
-    user_id: str = "dev-user",
+    user_id: str = Depends(get_current_user),
 ):
     """List all chat sessions for a document."""
     result = await db.execute(
